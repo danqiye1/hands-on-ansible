@@ -1,0 +1,14 @@
+---
+- name: Ensure Apache is installed
+  yum: name=httpd state=present
+
+- name: Start Apache
+  service: name=httpd state=started enabled=yes
+
+- name: Deploy configuration File
+  template: src=httpd.j2 dest=/etc/httpd/conf/httpd.conf
+  notify:
+  - Restart Apache
+
+- name: Copy Site Files
+  template: src=index.j2 dest={{ doc_root }}/index.html

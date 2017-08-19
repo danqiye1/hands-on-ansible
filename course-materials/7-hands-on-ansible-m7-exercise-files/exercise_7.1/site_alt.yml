@@ -1,0 +1,17 @@
+---
+## Web Servers
+- hosts: webservers
+  roles:
+    - server-common
+    - webserver
+  sudo: yes
+  gather_facts: no
+
+
+## DB Servers
+- hosts: dbservers
+  roles:
+    - server-common
+    - dbserver
+  sudo: yes
+  gather_facts: no

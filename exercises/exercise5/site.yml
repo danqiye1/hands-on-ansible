@@ -1,0 +1,7 @@
+---
+- hosts: webservers:dbservers
+  sudo: yes
+  gather_facts: no
+
+- include: webserver.yml
+- include: dbserver.yml

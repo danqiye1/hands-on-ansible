@@ -1,0 +1,54 @@
+---
+- hosts: webservers
+  sudo: yes
+  vars:
+    http_port: 80
+    doc_dir: /ansible/
+    doc_root: /var/www/html/ansible/
+    max_clients: 5
+
+  vars_prompt:
+    - name: username
+      prompt: What is your name?
+
+  tasks:
+  - name: Ensure that Apache is installed
+    yum: name=httpd state=present
+    when: ansible_os_family == "RedHat"
+
+  - name: Start Apache Services
+    service: name=httpd enabled=yes state=started
+
+  - name: Deploy Configuration File
+    template: src=templates/httpd.j2 dest=/etc/httpd/conf/httpd.conf
+    notify:
+      - Restart Apache
+
+  - name: Make a Site Deploy Directory
+    file: path={{ doc_root }} state=directory mode=755
+    ignore_errors: True
+
+  - name: Deploy Site Files
+    template: src=templates/index.j2 dest={{ doc_root }}/index.html
+
+  - name: Change index.html Permissions
+    file: dest={{ doc_root }}/index.html mode=755
+
+  handlers:
+    - name: Restart Apache
+      service: name=httpd state=restarted
+
+- hosts: dbservers
+  sudo: yes
+  tasks:
+  - name: Ensure that MySQL is installed
+    yum: name=mysql-server state=present
+    when: ansible_os_family == "RedHat"
+  - name: Start MySQL
+    service: name=mysqld state=started
+
+- hosts: webservers:dbservers
+  sudo: yes
+  tasks:
+  - name: Turn off IPTables
+    service: name=iptables state=stopped

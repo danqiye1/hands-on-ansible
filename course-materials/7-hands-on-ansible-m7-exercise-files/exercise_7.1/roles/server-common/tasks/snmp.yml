@@ -1,0 +1,13 @@
+---
+- name: Install net-snmp
+  yum: name=net-snmp state=present
+
+- name: Install snmp utils
+  yum: name=net-snmp-utils state=present 
+
+- name: Deploy SNMP Config
+  template: src=snmpd.conf.j2 dest=/etc/snmp/snmpd.conf
+  notify: SNMP Restart
+
+- name: Make sure service is running
+  service: name=snmpd state=started

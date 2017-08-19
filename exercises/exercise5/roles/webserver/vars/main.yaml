@@ -1,0 +1,6 @@
+---
+http_port: 80
+doc_dir: /ansible/
+doc_root: /var/www/html/ansible/
+max_clients: 5
+username: Danqi
